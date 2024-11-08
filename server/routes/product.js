@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { sql } = require("../db");
 
-// Lấy danh sách sản phẩm
-router.get("/", async (req, res) => {
+// Lấy tất cả sản phẩm
+router.get("/all", async (req, res) => {
   try {
     const result = await sql.query`SELECT * FROM Products`;
     res.json(result.recordset);
@@ -11,6 +11,24 @@ router.get("/", async (req, res) => {
     res.status(500).send("Error fetching products: " + err.message);
   }
 });
+
+// Lấy sản phẩm theo CategoryID
+router.get("/", async (req, res) => {
+  const categoryId = Number(req.query.categoryId); // Sử dụng chữ thường "categoryId"
+
+  if (isNaN(categoryId) || categoryId <= 0) {
+    return res.status(400).send("Invalid CategoryID");
+  }
+
+  try {
+    const result = await sql.query`SELECT * FROM Products WHERE CategoryID = ${categoryId}`;
+    res.json(result.recordset);
+  } catch (err) {
+    res.status(500).send("Error fetching products by category: " + err.message);
+  }
+});
+
+
 
 // Thêm sản phẩm mới
 router.post("/", async (req, res) => {
