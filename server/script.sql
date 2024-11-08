@@ -110,7 +110,7 @@ CREATE TABLE Feedback (
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 
--- Trigger to calculate DiscountedPrice when a promotion is applied to a product
+GO
 CREATE TRIGGER trg_CalculateDiscountedPrice
 ON ProductPromotions
 AFTER INSERT, UPDATE
@@ -120,7 +120,7 @@ BEGIN
     SET DiscountedPrice = Price - (Price * (SELECT DiscountPercentage / 100.0 FROM Promotions WHERE PromotionID = (SELECT PromotionID FROM inserted)))
     WHERE ProductID IN (SELECT ProductID FROM inserted);
 END;
-
+GO
 -- Insert Users with hashed and plain text passwords
 INSERT INTO Users (Username, Email, PasswordHash, Avatar) 
 VALUES 
@@ -183,6 +183,12 @@ VALUES
     ('Face Mask', 'Refreshing face mask', 5.99, 100, 3, 'facemask.png'),
 
     -- Fresh Fruits Category
+     ('Pear', 'Fresh juicy pear', 3.00, 150, 4, 'pear.png'),
+    ('Avocado', 'Ripe avocado for salads', 4.00, 120, 4, 'avocado.png'),
+    ('Cherry', 'Sweet cherries', 10.00, 90, 4, 'cherry.png'),
+    ('Orange', 'Juicy fresh orange', 7.00, 180, 4, 'orange.png'),
+    ('Peach', 'Sweet and ripe peach', 15.00, 70, 4, 'peach.png'),
+    ('Pomegranate', 'Juicy pomegranate', 23.00, 60, 4, 'pomegranate.png'),
     ('Apples', 'Fresh organic apples', 2.99, 200, 4, 'apples.png'),
     ('Bananas', 'Ripe yellow bananas', 1.99, 300, 4, 'bananas.png'),
     ('Oranges', 'Juicy fresh oranges', 3.49, 150, 4, 'oranges.png'),
