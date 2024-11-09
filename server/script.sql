@@ -132,8 +132,8 @@ VALUES
     ('frank_knight', 'frank@example.com', 'hashed_password_6', 'avatar6.png'),
     ('grace_hopper', 'grace@example.com', 'hashed_password_7', 'avatar7.png'),
     ('hank_pym', 'hank@example.com', '123456', 'avatar8.png'),
-    ('ian_dark', 'ian@example.com', '123456', 'avatar9.png'),
-    ('jane_smith', 'jane@example.com', '123456', 'avatar10.png');
+    ('kingsley', 'kingsley@gmail.com', '123456', 'avatar9.png'),
+    ('jane', 'jane@gmail.com', '123456', 'avatar10.png');
 
 -- Insert Categories
 INSERT INTO Categories (CategoryName, ImageURL) 
