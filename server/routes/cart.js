@@ -120,28 +120,32 @@ router.patch("/update-quantity", async (req, res) => {
     });
   }
 });
-
-// Remove a product from the cart (modified route to accept query parameters)
+// routes/cart.js
 router.delete("/remove", async (req, res) => {
-  const { userId, productId } = req.query; // use query instead of body
+  const { userId, productId } = req.query;
+  console.log("Received delete request for:", { userId, productId }); // Log received parameters
 
   try {
-    // Get the user's cart
+    // Fetch cart ID for the user
     const cartResult = await sql.query`
       SELECT CartID FROM Cart WHERE UserID = ${userId}
     `;
     if (cartResult.recordset.length === 0) {
+      console.log("Cart not found for user:", userId);
       return res.status(404).json({ success: false, message: "Cart not found" });
     }
     const cartId = cartResult.recordset[0].CartID;
+    console.log("Found cart ID:", cartId); // Log found cart ID
 
     // Remove the product from the cart
-    await sql.query`
+    const deleteResult = await sql.query`
       DELETE FROM CartItems WHERE CartID = ${cartId} AND ProductID = ${productId}
     `;
+    console.log("Delete operation result:", deleteResult); // Log the result of deletion
 
     res.json({ success: true, message: "Product removed from cart" });
   } catch (err) {
+    console.error("Error in cart removal route:", err);
     res.status(500).json({
       success: false,
       message: "Error removing product from cart",
@@ -149,6 +153,7 @@ router.delete("/remove", async (req, res) => {
     });
   }
 });
+
 
 
 module.exports = router;
