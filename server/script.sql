@@ -110,6 +110,18 @@ CREATE TABLE Feedback (
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 
+
+-- Create Invoices table
+CREATE TABLE Invoices (
+    InvoiceID INT PRIMARY KEY IDENTITY,
+    OrderID INT NOT NULL,
+    InvoiceDate DATETIME DEFAULT GETDATE(),
+    TotalAmount DECIMAL(10, 2) NOT NULL,
+    Status NVARCHAR(50) NOT NULL DEFAULT 'Unpaid' CHECK (Status IN ('Paid', 'Unpaid', 'Refunded')),
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID) ON DELETE CASCADE
+);
+
+
 GO
 CREATE TRIGGER trg_CalculateDiscountedPrice
 ON ProductPromotions
@@ -203,7 +215,7 @@ VALUES
 -- Insert Carts for selected Users
 INSERT INTO Cart (UserID) 
 VALUES 
-    (1), (2), (3), (8), (9);
+    (1), (2), (3), (4), (5), (6), (7), (8), (9), (10);
 
 -- Insert CartItems
 INSERT INTO CartItems (CartID, ProductID, Quantity, Price)
@@ -211,24 +223,17 @@ VALUES
     (1, 1, 1, 799.99), 
     (1, 2, 2, 499.99), 
     (1, 3, 1, 299.99), 
-    (1, 10, 1, 59.99),
-    (2, 4, 1, 199.99), 
-    (2, 5, 2, 99.99), 
-    (2, 7, 1, 89.99), 
-    (2, 9, 2, 129.99),
-    (3, 12, 1, 99.99), 
-    (3, 14, 2, 9.99), 
-    (3, 17, 3, 15.99), 
-    (3, 20, 1, 59.99),
-    (4, 21, 10, 2.99), 
-    (4, 22, 6, 1.99), 
-    (4, 23, 3, 3.49), 
-    (4, 26, 1, 4.99),
-    (5, 31, 2, 2.99), 
-    (5, 32, 4, 1.99), 
-    (5, 35, 5, 5.99), 
-    (5, 39, 2, 3.99), 
-    (5, 40, 1, 3.49);
+    (2, 4, 1, 199.99),
+    (2, 5, 1, 149.99),
+    (3, 6, 2, 249.99), 
+    (3, 7, 3, 59.99),
+    (4, 8, 1, 999.99), 
+    (5, 9, 4, 129.99), 
+    (6, 10, 2, 49.99),
+    (7, 11, 3, 99.99),
+    (8, 12, 1, 89.99),
+    (9, 13, 1, 159.99),
+    (10, 14, 5, 9.99);
 
 -- Insert Orders for selected Users
 INSERT INTO Orders (UserID, Status) 
@@ -237,7 +242,12 @@ VALUES
     (2, 'Pending'), 
     (3, 'Cancelled'), 
     (4, 'Shipped'), 
-    (5, 'Pending');
+    (5, 'Completed'),
+    (6, 'Pending'),
+    (7, 'Shipped'),
+    (8, 'Completed'),
+    (9, 'Pending'),
+    (10, 'Cancelled');
 
 -- Insert OrderItems linked to Orders
 INSERT INTO OrderItems (OrderID, ProductID, Quantity, Price)
@@ -245,15 +255,29 @@ VALUES
     (1, 1, 1, 799.99), 
     (1, 2, 1, 499.99), 
     (2, 3, 2, 299.99), 
-    (3, 5, 1, 99.99), 
-    (4, 6, 3, 59.99);
+    (3, 4, 1, 199.99), 
+    (4, 5, 2, 149.99),
+    (5, 6, 1, 249.99),
+    (6, 7, 3, 59.99),
+    (7, 8, 1, 999.99),
+    (8, 9, 4, 129.99),
+    (9, 10, 2, 49.99),
+    (10, 11, 3, 99.99),
+    (10, 12, 1, 89.99);
 
 -- Insert Payments for Orders
 INSERT INTO Payments (OrderID, PaymentMethod, Amount, Status)
 VALUES 
     (1, 'Credit Card', 1299.99, 'Completed'),
-    (2, 'PayPal', 299.99, 'Pending'), 
-    (3, 'Bank Transfer', 99.99, 'Cancelled');
+    (2, 'PayPal', 599.98, 'Pending'),
+    (3, 'Bank Transfer', 199.99, 'Cancelled'),
+    (4, 'Credit Card', 299.98, 'Completed'),
+    (5, 'Cash', 249.99, 'Completed'),
+    (6, 'PayPal', 179.97, 'Pending'),
+    (7, 'Credit Card', 999.99, 'Completed'),
+    (8, 'Bank Transfer', 519.96, 'Completed'),
+    (9, 'Cash', 99.98, 'Pending'),
+    (10, 'PayPal', 89.99, 'Cancelled');
 
 -- Insert Feedback
 INSERT INTO Feedback (ProductID, UserID, Rating, Comment)
@@ -261,7 +285,37 @@ VALUES
     (1, 1, 5, 'Excellent quality!'), 
     (2, 2, 4, 'Good value.'), 
     (3, 3, 3, 'Okay quality.'), 
-    (4, 4, 5, 'Very comfortable.');
+    (4, 4, 5, 'Very comfortable.'),
+    (5, 5, 4, 'Worth the price.'),
+    (6, 6, 5, 'Superb product!'),
+    (7, 7, 2, 'Not as expected.'),
+    (8, 8, 4, 'Good performance.'),
+    (9, 9, 5, 'Highly recommended!'),
+    (10, 10, 3, 'Average quality.');
+
+-- Insert sample invoices (for existing orders)
+INSERT INTO Invoices (OrderID, TotalAmount, Status) 
+VALUES 
+    (1, 1299.99, 'Paid'),
+    (2, 599.98, 'Unpaid'),
+    (3, 199.99, 'Refunded'),
+    (4, 299.98, 'Paid'),
+    (5, 249.99, 'Paid'),
+    (6, 179.97, 'Unpaid'),
+    (7, 999.99, 'Paid'),
+    (8, 519.96, 'Paid'),
+    (9, 99.98, 'Unpaid'),
+    (10, 89.99, 'Refunded'),
+    (11, 129.99, 'Paid'),
+    (12, 199.99, 'Paid'),
+    (13, 399.99, 'Unpaid'),
+    (14, 109.99, 'Refunded'),
+    (15, 229.99, 'Paid'),
+    (16, 289.99, 'Paid'),
+    (17, 189.99, 'Unpaid'),
+    (18, 329.99, 'Paid'),
+    (19, 459.99, 'Paid'),
+    (20, 119.99, 'Refunded');
 
 
 

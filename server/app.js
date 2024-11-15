@@ -5,6 +5,8 @@ const productRoutes = require("./routes/product");
 const categoryRoutes = require("./routes/category");
 const userRoutes = require("./routes/user")
 const cartRoutes = require("./routes/cart")
+const orderRoutes = require('./routes/order')
+const invoiceRoutes = require('./routes/invoice')
 const app = express();
 const PORT = 3002;
 
@@ -20,7 +22,10 @@ app.use("/user", userRoutes)
 app.use("/products", productRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/cart",cartRoutes)
+app.use("/invoices", invoiceRoutes);
+app.use("/orders", orderRoutes);
 app.use("/images", express.static("public/images"));
+
 // Khởi động server
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

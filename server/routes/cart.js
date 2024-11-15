@@ -42,37 +42,33 @@ router.post("/add", async (req, res) => {
         SET Quantity = ${currentQuantity + 1}
         WHERE CartID = ${cartId} AND ProductID = ${productId}
       `;
+      res.json({ success: false, message: "Quantity updated for existing item" });
     } else {
       // Add the product to the cart with an initial quantity of 1
       await sql.query`
         INSERT INTO CartItems (CartID, ProductID, Quantity, Price)
         VALUES (${cartId}, ${productId}, 1, ${productPrice})
       `;
+      res.json({ success: true, message: "Product added as new unique item" });
     }
-
-    res.json({ success: true, message: "Product added to cart" });
   } catch (err) {
     console.error("Error adding product to cart:", err);
     res.status(500).json({ success: false, message: "Internal Server Error", error: err.message });
   }
 });
 
-// Get cart items for a specific user
+// Get all cart items for a specific user
 router.get("/:userId", async (req, res) => {
   const { userId } = req.params;
 
   try {
-    // Check if the cart exists for the user and retrieve CartID
-    const cartResult = await sql.query`
-      SELECT CartID FROM Cart WHERE UserID = ${userId}
-    `;
+    const cartResult = await sql.query`SELECT CartID FROM Cart WHERE UserID = ${userId}`;
     if (cartResult.recordset.length === 0) {
       return res.json([]); // Return empty array if no cart exists
     }
-    
+
     const cartId = cartResult.recordset[0].CartID;
 
-    // Retrieve products and their details from CartItems
     const result = await sql.query`
       SELECT ci.CartItemID, p.ProductID, p.ProductName, p.Description, p.Image, 
              ci.Quantity, ci.Price
@@ -95,16 +91,12 @@ router.patch("/update-quantity", async (req, res) => {
   const { userId, productId, quantity } = req.body;
 
   try {
-    // Get the user's cart
-    const cartResult = await sql.query`
-      SELECT CartID FROM Cart WHERE UserID = ${userId}
-    `;
+    const cartResult = await sql.query`SELECT CartID FROM Cart WHERE UserID = ${userId}`;
     if (cartResult.recordset.length === 0) {
       return res.status(404).json({ success: false, message: "Cart not found" });
     }
     const cartId = cartResult.recordset[0].CartID;
 
-    // Update the product quantity in the cart
     await sql.query`
       UPDATE CartItems 
       SET Quantity = ${quantity}
@@ -120,32 +112,21 @@ router.patch("/update-quantity", async (req, res) => {
     });
   }
 });
-// routes/cart.js
+
+// Remove a product from the cart
 router.delete("/remove", async (req, res) => {
   const { userId, productId } = req.query;
-  console.log("Received delete request for:", { userId, productId }); // Log received parameters
 
   try {
-    // Fetch cart ID for the user
-    const cartResult = await sql.query`
-      SELECT CartID FROM Cart WHERE UserID = ${userId}
-    `;
+    const cartResult = await sql.query`SELECT CartID FROM Cart WHERE UserID = ${userId}`;
     if (cartResult.recordset.length === 0) {
-      console.log("Cart not found for user:", userId);
       return res.status(404).json({ success: false, message: "Cart not found" });
     }
     const cartId = cartResult.recordset[0].CartID;
-    console.log("Found cart ID:", cartId); // Log found cart ID
 
-    // Remove the product from the cart
-    const deleteResult = await sql.query`
-      DELETE FROM CartItems WHERE CartID = ${cartId} AND ProductID = ${productId}
-    `;
-    console.log("Delete operation result:", deleteResult); // Log the result of deletion
-
+    await sql.query`DELETE FROM CartItems WHERE CartID = ${cartId} AND ProductID = ${productId}`;
     res.json({ success: true, message: "Product removed from cart" });
   } catch (err) {
-    console.error("Error in cart removal route:", err);
     res.status(500).json({
       success: false,
       message: "Error removing product from cart",
@@ -154,6 +135,33 @@ router.delete("/remove", async (req, res) => {
   }
 });
 
+// Get the count of unique items in the cart for a specific user
+router.get("/:userId/count", async (req, res) => {
+  const { userId } = req.params;
 
+  try {
+    const cartResult = await sql.query`SELECT CartID FROM Cart WHERE UserID = ${userId}`;
+    if (cartResult.recordset.length === 0) {
+      return res.json({ count: 0 }); // If no cart exists, return count as 0
+    }
+
+    const cartId = cartResult.recordset[0].CartID;
+
+    const countResult = await sql.query`
+      SELECT COUNT(*) AS count
+      FROM CartItems
+      WHERE CartID = ${cartId}
+    `;
+    
+    res.json(countResult.recordset[0]); // Expected response: { count: <number> }
+  } catch (err) {
+    console.error("Error fetching cart item count:", err);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching cart item count",
+      error: err.message,
+    });
+  }
+});
 
 module.exports = router;
