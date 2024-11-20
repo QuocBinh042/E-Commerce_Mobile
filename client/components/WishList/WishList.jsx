@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Header from '../Home/Header';
 import BottomNavigation from '../Home/BottomNavigation';
+import { useBottomTab } from '../../App';
 
 const Wishlist = () => {
+	const { setActiveTab } = useBottomTab();
+	useEffect(() => {
+		setActiveTab("WishList");
+	}, []);
 	const wishlistItems = [
 		{ id: 1, name: 'Cat sports mans shoe', brand: 'Rebook', price: 500.0, image: 'https://via.placeholder.com/100' },
 		{ id: 2, name: 'Nikka sports mans shoe', brand: 'Rebook', price: 450.0, image: 'https://via.placeholder.com/100' },

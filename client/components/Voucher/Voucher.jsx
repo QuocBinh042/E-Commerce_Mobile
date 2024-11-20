@@ -45,14 +45,7 @@ const Voucher = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={20} color='#323842' />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Orders</Text>
-      </View>
-
+      <Header title="Voucher" showFullHeader={false} />
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}

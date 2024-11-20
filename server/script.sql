@@ -1,11 +1,25 @@
+CREATE DATABASE emarket
 -- Create Users table with Avatar field
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY,
     Username NVARCHAR(50) NOT NULL UNIQUE,
     Email NVARCHAR(100) NOT NULL UNIQUE,
     PasswordHash NVARCHAR(256) NOT NULL,
+    PhoneNumber NVARCHAR(50) NOT NULL UNIQUE,
     Avatar NVARCHAR(255),
+    FullName NVARCHAR(100),
     CreatedAt DATETIME DEFAULT GETDATE()
+);
+
+
+CREATE TABLE Addresses (
+    AddressID INT PRIMARY KEY IDENTITY,
+    City NVARCHAR(100) NOT NULL,
+    District NVARCHAR(100) NOT NULL,
+    Street NVARCHAR(255) NOT NULL,
+    Ward NVARCHAR(100) NOT NULL,
+    UserID INT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 
 -- Create Categories table
@@ -133,19 +147,35 @@ BEGIN
     WHERE ProductID IN (SELECT ProductID FROM inserted);
 END;
 GO
--- Insert Users with hashed and plain text passwords
-INSERT INTO Users (Username, Email, PasswordHash, Avatar) 
+-- Insert Users 
+INSERT INTO Users (Username, Email, PhoneNumber, PasswordHash, Avatar, FullName) 
 VALUES 
-    ('alice_wonder', 'alice@example.com', 'hashed_password_1', 'avatar1.png'),
-    ('bob_builder', 'bob@example.com', 'hashed_password_2', 'avatar2.png'),
-    ('charlie_doe', 'charlie@example.com', 'hashed_password_3', 'avatar3.png'),
-    ('daisy_flower', 'daisy@example.com', 'hashed_password_4', 'avatar4.png'),
-    ('eve_long', 'eve@example.com', 'hashed_password_5', 'avatar5.png'),
-    ('frank_knight', 'frank@example.com', 'hashed_password_6', 'avatar6.png'),
-    ('grace_hopper', 'grace@example.com', 'hashed_password_7', 'avatar7.png'),
-    ('hank_pym', 'hank@example.com', '123456', 'avatar8.png'),
-    ('kingsley', 'kingsley@gmail.com', '123456', 'avatar9.png'),
-    ('jane', 'jane@gmail.com', '123456', 'avatar10.png');
+    ('alice_wonder', 'alice@example.com', '1234567890', 'hashed_password_1', 'avatar1.png', 'Alice Wonder'),
+    ('bob_builder', 'bob@example.com', '2345678901', 'hashed_password_2', 'avatar2.png', 'Bob Builder'),
+    ('charlie_doe', 'charlie@example.com', '3456789012', 'hashed_password_3', 'avatar3.png', 'Charlie Doe'),
+    ('daisy_flower', 'daisy@example.com', '4567890123', 'hashed_password_4', 'avatar4.png', 'Daisy Flower'),
+    ('eve_long', 'eve@example.com', '5678901234', 'hashed_password_5', 'Eve Long'),
+    ('frank_knight', 'frank@example.com', '6789012345', 'hashed_password_6', 'Frank Knight'),
+    ('grace_hopper', 'grace@example.com', '7890123456', 'hashed_password_7', 'Grace Hopper'),
+    ('hank_pym', 'hank@example.com', '8901234567', 'hashed_password_8', 'Hank Pym'),
+    ('kingsley', 'kingsley@gmail.com', '9012345678', 'hashed_password_9', 'avatar9.png', 'Kingsley Shacklebolt'),
+    ('jane', 'jane@gmail.com', '0123456789', 'hashed_password_10', 'avatar10.png', 'Jane Doe');
+
+
+-- Insert example addresses for users
+INSERT INTO Addresses (City, District, Street, Ward, UserID)
+VALUES
+    ('Hanoi', 'Ba Dinh', '123 Hoang Hoa Tham', 'Phuc Xa', 1),
+    ('Hanoi', 'Dong Da', '456 Thai Ha', 'Lang Ha', 1),
+    ('Ho Chi Minh City', 'District 1', '789 Nguyen Hue', 'Ben Nghe', 2),
+    ('Ho Chi Minh City', 'District 3', '101 Le Van Sy', 'Ward 7', 3),
+    ('Da Nang', 'Hai Chau', '202 Tran Phu', 'Thach Thang', 4),
+    ('Hanoi', 'Cau Giay', '303 Xuan Thuy', 'Dich Vong Hau', 5),
+    ('Hanoi', 'Hai Ba Trung', '404 Minh Khai', 'Vinh Tuy', 6),
+    ('Hue', 'Phu Hoi', '505 Tran Hung Dao', 'Ward 1', 7),
+    ('Can Tho', 'Ninh Kieu', '606 Vo Van Kiet', 'An Hoa', 8),
+    ('Hanoi', 'Thanh Xuan', '707 Nguyen Trai', 'Thanh Xuan Nam', 9);
+
 
 -- Insert Categories
 INSERT INTO Categories (CategoryName, ImageURL) 

@@ -38,7 +38,7 @@ const ElectronicsProduct = () => {
   }
   return (
     <View style={styles.container}>
-      <Header title="Electronics" />
+      <Header title="Electronics" showFullHeader={true} />
       <SearchBar />
       <ScrollView>
         <CategorySeaction />

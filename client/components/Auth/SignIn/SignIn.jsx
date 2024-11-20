@@ -6,7 +6,7 @@ import { useUser } from '../../../App';
 
 export default function SignIn({ navigation }) {
     const [username, setUsername] = useState('alice_wonder');
-    const [password, setPassword] = useState('hashed_password_1');
+    const [password, setPassword] = useState('123456');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalMessage, setModalMessage] = useState('');

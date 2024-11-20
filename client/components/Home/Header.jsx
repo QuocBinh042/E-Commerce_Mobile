@@ -4,14 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useUser, useCart } from '../../App';
 
-const Header = ({ title }) => {
+const Header = ({ title, showFullHeader = true }) => {
   const navigation = useNavigation();
   const { user } = useUser();
-  const { cartItemCount, resetCartCount } = useCart(); // Get resetCartCount function
+  const { cartItemCount, resetCartCount } = useCart();
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      resetCartCount(); // Reset cart count when screen gains focus
+      resetCartCount();
     });
     return unsubscribe;
   }, [navigation]);
@@ -19,62 +19,100 @@ const Header = ({ title }) => {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.headerContent}>
-        {/* Back button */}
+        {/* Back Button */}
         <TouchableOpacity
           style={styles.menuButton}
           onPress={() => {
             navigation.goBack();
-            resetCartCount(); // Reset count when going back
+            resetCartCount();
           }}
         >
           <FontAwesome5 name="arrow-left" size={20} color="rgba(23, 26, 31, 1)" />
         </TouchableOpacity>
 
-        {/* Page Title */}
-        <Text style={styles.headerTitle}>{title}</Text>
+        {/* Title */}
+        <Text
+          style={[
+            styles.headerTitle,
+            showFullHeader ? styles.centeredTitleWithIcons : styles.centeredTitleWithoutIcons,
+          ]}
+        >
+          {title}
+        </Text>
 
-        {/* Cart and Avatar */}
-        <View style={styles.rightIcons}>
-          {/* Cart Icon with badge for item count */}
-          <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate("Cart")}>
-            <FontAwesome5 name="shopping-cart" size={20} color="rgba(23, 26, 31, 1)" />
-            {cartItemCount > 0 && (
-              <View style={styles.cartBadge}>
-                <Text style={styles.badgeText}>{cartItemCount}</Text> {/* Display unique item count */}
-              </View>
+        {/* Right Icons */}
+        {showFullHeader ? (
+          <View style={styles.rightIcons}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => navigation.navigate('Cart')}
+            >
+              <FontAwesome5 name="shopping-cart" size={20} color="rgba(23, 26, 31, 1)" />
+              {cartItemCount > 0 && (
+                <View style={styles.cartBadge}>
+                  <Text style={styles.badgeText}>{cartItemCount}</Text>
+                </View>
+              )}
+            </TouchableOpacity>
+
+            {user && user.avatar ? (
+              <Image
+                source={{ uri: `http://localhost:3002/images/avatars/${user.avatar}` }}
+                style={styles.avatar}
+              />
+            ) : (
+              <FontAwesome5 name="user-circle" size={32} color="rgba(23, 26, 31, 1)" />
             )}
-          </TouchableOpacity>
-
-          {/* User Avatar */}
-          {user && user.avatar ? (
-            <Image source={{ uri: `http://localhost:3002/images/${user.avatar}` }} style={styles.avatar} />
-          ) : (
-            <FontAwesome5 name="user-circle" size={32} color="rgba(23, 26, 31, 1)" />
-          )}
-        </View>
+          </View>
+        ) : (
+          // Placeholder for alignment when right icons are hidden
+          <View style={styles.rightPlaceholder} />
+        )}
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  headerContainer: { width: '100%', padding: 10 },
+  headerContainer: {
+    width: '100%',
+    padding: 10,
+    backgroundColor: '#FFFFFF',
+  },
   headerContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 6,
     paddingHorizontal: 12,
   },
-  menuButton: { borderRadius: 6 },
-  headerTitle: {
-    fontFamily: 'Lato, sans-serif',
-    fontSize: 18,
-    color: 'rgba(23, 26, 31, 1)',
-    fontWeight: '700',
+  menuButton: {
+    borderRadius: 6,
   },
-  rightIcons: { flexDirection: 'row', alignItems: 'center' },
-  iconButton: { position: 'relative', borderRadius: 6, marginRight: 10 },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: 'rgba(23, 26, 31, 1)',
+  },
+  centeredTitleWithIcons: {
+    flex: 1,
+    textAlign: 'center',
+  },
+  centeredTitleWithoutIcons: {
+    flex: 1,
+    textAlign: 'center',
+    marginRight: 45, // Placeholder spacing for missing icons
+  },
+  rightIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rightPlaceholder: {
+    width: 50, // Matches the width of the right icons
+  },
+  iconButton: {
+    position: 'relative',
+    borderRadius: 6,
+    marginRight: 10,
+  },
   cartBadge: {
     position: 'absolute',
     right: -10,
@@ -84,7 +122,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
   },
-  badgeText: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
+  badgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
   avatar: {
     width: 32,
     height: 32,

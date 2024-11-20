@@ -7,7 +7,10 @@ const userRoutes = require("./routes/user")
 const cartRoutes = require("./routes/cart")
 const orderRoutes = require('./routes/order')
 const invoiceRoutes = require('./routes/invoice')
+const addressRoutes = require("./routes/address")
 const app = express();
+const path = require("path"); 
+
 const PORT = 3002;
 
 // Middleware
@@ -24,7 +27,9 @@ app.use("/categories", categoryRoutes);
 app.use("/cart",cartRoutes)
 app.use("/invoices", invoiceRoutes);
 app.use("/orders", orderRoutes);
-app.use("/images", express.static("public/images"));
+app.use("/address", addressRoutes);
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
 
 // Khởi động server
 app.listen(PORT, () => {

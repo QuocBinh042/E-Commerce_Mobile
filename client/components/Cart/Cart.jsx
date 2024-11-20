@@ -13,7 +13,7 @@ const Cart = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Checkout" />
+      <Header title="Checkout" showFullHeader={false}/>
       <ScrollView>
         <CartItemList userId={user.userId} selectedItemIds={selectedItemIds} />
       </ScrollView>

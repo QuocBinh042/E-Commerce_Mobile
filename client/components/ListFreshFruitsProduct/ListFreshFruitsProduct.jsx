@@ -55,7 +55,7 @@ const FreshFruitsProduct = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Fresh Fruits" />
+      <Header title="Fresh Fruits" showFullHeader={true} />
       <SearchBar />
       <ScrollView>
         <Banner />

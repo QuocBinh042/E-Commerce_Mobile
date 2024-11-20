@@ -53,6 +53,8 @@ export const del = async (path, options = {}) => {
 
 
 export const patch = async (path, options) => {
+    console.log("path", path);
+    console.log("options", options)
     try {
         const response = await fetch(API_DOMAIN + path, {
             method: "PATCH",
@@ -71,3 +73,21 @@ export const patch = async (path, options) => {
         throw error;
     }
 };
+
+
+export const upload = async (path, formData) => {
+    try {
+      const response = await fetch(API_DOMAIN + path, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error in UPLOAD request:", error);
+      throw error;
+    }
+  };
+  

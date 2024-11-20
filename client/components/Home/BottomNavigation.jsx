@@ -1,18 +1,23 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { useBottomTab } from '../../App'; // Import context từ App.js
 
 const BottomNavigation = () => {
-  // State để lưu trữ mục đang active
-  const [activeTab, setActiveTab] = useState('Home');
+  const { activeTab, setActiveTab } = useBottomTab(); // Lấy trạng thái active tab từ context
   const navigation = useNavigation();
-  const handlePress = (tabName) => {
-    setActiveTab(tabName);
+
+  const handlePress = (tabName, route) => {
+    setActiveTab(tabName); // Cập nhật trạng thái active tab
+    navigation.navigate(route); // Điều hướng đến màn hình tương ứng
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.navItem} onPress={() => {handlePress('Home'), navigation.navigate('Home') }}>
+      <TouchableOpacity
+        style={styles.navItem}
+        onPress={() => handlePress('Home', 'Home')}
+      >
         <Image
           source={require('../../assets/data/Home.png')}
           style={[styles.navIcon, activeTab === 'Home' && styles.activeIcon]}
@@ -20,7 +25,10 @@ const BottomNavigation = () => {
         <Text style={[styles.navText, activeTab === 'Home' && styles.activeText]}>Home</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => handlePress('Search')}>
+      <TouchableOpacity
+        style={styles.navItem}
+        onPress={() => handlePress('Search', 'Search')}
+      >
         <Image
           source={require('../../assets/data/Search.png')}
           style={[styles.navIcon, activeTab === 'Search' && styles.activeIcon]}
@@ -28,7 +36,10 @@ const BottomNavigation = () => {
         <Text style={[styles.navText, activeTab === 'Search' && styles.activeText]}>Search</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => { handlePress('Favorites'), navigation.navigate('WishList') }}>
+      <TouchableOpacity
+        style={styles.navItem}
+        onPress={() => handlePress('Favorites', 'WishList')}
+      >
         <Image
           source={require('../../assets/data/Favorites.png')}
           style={[styles.navIcon, activeTab === 'Favorites' && styles.activeIcon]}
@@ -41,7 +52,10 @@ const BottomNavigation = () => {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => handlePress('Inbox')}>
+      <TouchableOpacity
+        style={styles.navItem}
+        onPress={() => handlePress('Inbox', 'Inbox')}
+      >
         <Image
           source={require('../../assets/data/Inbox.png')}
           style={[styles.navIcon, activeTab === 'Inbox' && styles.activeIcon]}
@@ -49,7 +63,10 @@ const BottomNavigation = () => {
         <Text style={[styles.navText, activeTab === 'Inbox' && styles.activeText]}>Inbox</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navItem} onPress={() => {handlePress('Account'), navigation.navigate('Profile')}}>
+      <TouchableOpacity
+        style={styles.navItem}
+        onPress={() => handlePress('Account', 'Profile')}
+      >
         <Image
           source={require('../../assets/data/Account.png')}
           style={[styles.navIcon, activeTab === 'Account' && styles.activeIcon]}
@@ -80,7 +97,7 @@ const styles = StyleSheet.create({
     tintColor: '#6b7280', // Màu mặc định
   },
   activeIcon: {
-    tintColor: '#FF6026', // Màu xanh cho icon active
+    tintColor: '#FF6026', // Màu cam cho icon active
   },
   navText: {
     fontSize: 12,
@@ -88,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   activeText: {
-    color: '#FF6026',  // Màu xanh cho text active
+    color: '#FF6026', // Màu cam cho text active
   },
   badge: {
     position: 'absolute',

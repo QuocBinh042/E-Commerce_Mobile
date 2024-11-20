@@ -60,7 +60,7 @@ const Payment = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Payment" />
+      <Header title="Payment" showFullHeader={false} />
       <ScrollView>
         <TotalAmount amount={grandTotal} />
         <PaymentMethods />

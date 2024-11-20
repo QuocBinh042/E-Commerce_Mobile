@@ -44,7 +44,7 @@ const PaymentSuccess = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Payment" />
+      <Header title="Payment" showFullHeader={false} />
       <ScrollView contentContainerStyle={styles.content}>
         <Image source={{ uri: 'https://example.com/success-image.png' }} style={styles.successIcon} resizeMode="contain" />
         <Text style={styles.title}>Order placed successfully!</Text>
